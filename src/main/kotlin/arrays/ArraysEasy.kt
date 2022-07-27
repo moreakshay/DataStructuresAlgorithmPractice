@@ -99,11 +99,11 @@ class Arrays {
      * SEARCH
      * */
 
-    //when x = 0; x * 2 = 0 so exclude x's index from the search
-    //from start to x's index - 1 and x's index + 1 to end to search for another 0,
     fun checkIfExist(nums: IntArray): Boolean {
         nums.sort()
         for ((idx, i) in nums.withIndex())
+            //when x = 0; x * 2 = 0 so exclude x's index from the search
+            //from start to x's index - 1 and x's index + 1 to end to search for another 0,
             if(binarySearch(nums, 0, idx - 1, i * 2) >= 0 ||
                     binarySearch(nums, idx + 1, nums.size - 1, i * 2) >= 0) return true
         return false
@@ -129,6 +129,41 @@ class Arrays {
     /**
      * IN-PLACE OPERATIONS
      * */
+
+    fun replaceElements(arr: IntArray): IntArray {
+        var hidx = findHighest(arr, 1, arr.size - 1)
+        var idx = 0
+        while (idx <= arr.size - 1){
+            if (idx == arr.size - 1) {
+                arr[idx] = -1
+                return arr
+            }
+            if (idx >= hidx) hidx = findHighest(arr, hidx + 1, arr.size - 1)
+            for (i in idx until hidx) {
+                arr[i] = arr[hidx]
+                idx = hidx - 1
+            }
+            idx++
+        }
+        return arr
+
+        /*
+        *
+        if (arr.size == 1) {
+            arr[0] = -1
+            return arr
+        }
+        var max = arr[arr.size - 1]
+        var temp = 0
+        for (i in arr.size - 2 downTo 0) {
+            temp = arr[i]
+            arr[i] = max
+            max = max.coerceAtLeast(temp)
+        }
+        arr[arr.size - 1] = -1
+        return arr
+        * */
+    }
 
     //helper methods
     private fun findDigits(num: Int): Int = (Math.log10(num.toDouble()) + 1).toInt()
@@ -180,7 +215,17 @@ class Arrays {
         return if (nums[mid] == n) mid
         else if (n < nums[mid]) binarySearch(nums, low, mid - 1, n)
         else binarySearch(nums, mid + 1, high, n)
+    }
 
+    private fun findHighest(arr: IntArray, start: Int, end: Int): Int{
+        var highest = start
+        var idx = start
+        while (idx <= end){
+            highest = if (arr[highest] > arr[idx]) highest
+            else idx
+            idx++
+        }
+        return highest
     }
 }
 
@@ -236,5 +281,11 @@ fun main() {
     println("\n\nReturn true if and only if it is a valid mountain array.")
     println(nums.contentToString())
     println(arrays.checkIfMountain(nums))
+
+    nums = intArrayOf(17, 18, 5, 4, 6, 1)
+    println("\n\nReplace every element in that array with the greatest element among the elements to its right, " +
+            "and replace the last element with -1.")
+    println(nums.contentToString())
+    println(arrays.replaceElements(nums).contentToString())
 
 }
