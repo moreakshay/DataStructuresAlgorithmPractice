@@ -99,11 +99,31 @@ class Arrays {
      * SEARCH
      * */
 
-    fun checkIfExist(arr: IntArray): Boolean {
-        for (i in arr) {
-
-        }
+    //when x = 0; x * 2 = 0 so exclude x's index from the search
+    //from start to x's index - 1 and x's index + 1 to end to search for another 0,
+    fun checkIfExist(nums: IntArray): Boolean {
+        nums.sort()
+        for ((idx, i) in nums.withIndex())
+            if(binarySearch(nums, 0, idx - 1, i * 2) >= 0 ||
+                    binarySearch(nums, idx + 1, nums.size - 1, i * 2) >= 0) return true
         return false
+    }
+
+    fun checkIfMountain(arr: IntArray): Boolean {
+        if (arr.size < 3) return false
+        var index = 1
+        //while runs from start to peak
+        while (index < arr.size && arr[index - 1] < arr[index]) {
+            index++
+        }
+        //if no peak found i.e index reached the end of array return false
+        if (index == 1 || (index == arr.size)) return false
+        //while runs from peak to end
+        while (index < arr.size && arr[index - 1] > arr[index]) {
+            index++
+        }
+        //if end found it is a valid mountain array
+        return index == arr.size
     }
 
     /**
@@ -153,6 +173,15 @@ class Arrays {
 
         return nums
     }
+
+    private fun binarySearch(nums: IntArray, low: Int, high: Int, n: Int): Int{
+        if(low > high) return -1
+        val mid = (low + high) / 2
+        return if (nums[mid] == n) mid
+        else if (n < nums[mid]) binarySearch(nums, low, mid - 1, n)
+        else binarySearch(nums, mid + 1, high, n)
+
+    }
 }
 
 
@@ -198,9 +227,14 @@ fun main() {
     println(nums.contentToString())
     println(arrays.removeDuplicates(nums))
 
-    nums = intArrayOf(10, 2, 5, 3)
+    nums = intArrayOf(-10,12,-20,-8,15)
     println("\n\nCheck if there exists two integers N and M such that N is the double of M")
     println(nums.contentToString())
     println(arrays.checkIfExist(nums))
+
+    nums = intArrayOf(0, 2, 3, 4, 5, 2, 1, 0, 7, 9, 8, 6, 5, 2, 1)
+    println("\n\nReturn true if and only if it is a valid mountain array.")
+    println(nums.contentToString())
+    println(arrays.checkIfMountain(nums))
 
 }
